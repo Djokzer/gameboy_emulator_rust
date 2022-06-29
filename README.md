@@ -10,9 +10,9 @@ A GameBoy Emulator to learn how emulation works.
 
 <img src="assets/main_menu_2.png" width = 500>
 
-## Resources
+# Resources
 - [GameBoy Pandoc](https://gbdev.io/pandocs/)
 - [GameBoy Opcodes](https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html)
 - [GameBoy list of resources](https://project-awesome.org/gbdev/awesome-gbdev)
-## Credits
+# Credits
 - [Raylib rs](https://github.com/deltaphc/raylib-rs)
