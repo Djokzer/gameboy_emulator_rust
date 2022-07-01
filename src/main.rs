@@ -1,6 +1,7 @@
 use raylib::prelude::*;
 
 mod main_menu;
+mod cartridge;
 
 const WIDTH : i32 = 160;
 const HEIGTH : i32 = 144;
@@ -34,7 +35,8 @@ fn main()
         if start_game
         {
             //EMULATION starts here
-
+            let mut cart = cartridge::init_cartridge().load_cartridge(&filename);
+            quit = true;
         }
         else
         {   

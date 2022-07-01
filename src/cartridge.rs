@@ -1,4 +1,5 @@
 //Imports
+use std::{fs::{self, metadata, File}, io::Read};
 
 // Constants
 const NINTENDO_LOGO : [u8;48] = 
@@ -82,13 +83,20 @@ impl cartridge
     pub fn load_cartridge(&mut self, filename : &str)
     {
         self.filename = filename.to_string();
-        self.size = fs::metadata(filename).unwrap().len();
-        self.data = fs::read(filename).unwrap();
-        self.header = self.get_header();
+
+        let mut f = File::open(&self.filename).expect("no file found");
+        let metadata = metadata(&self.filename).expect("unable to read metadata");
+        let mut buffer = vec![0; metadata.len() as usize];
+        f.read(&mut buffer).expect("buffer overflow");
+        
+        self.data = buffer;
+        self.get_header();
     }
     
     pub fn get_header(&mut self)
     {
-        
+        self.header.logo.copy_from_slice(&self.data[0x104..0x134]);
+        self.header.title.copy_from_slice(&self.data[0x134..0x144]);
+        println!("Title: {}", String::from_utf8(self.header.title.to_vec()).unwrap());
     }
 }
