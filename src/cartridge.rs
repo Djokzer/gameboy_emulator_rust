@@ -27,7 +27,7 @@ const CART_TYPE : [&str; 35] =
 pub struct cartridge_header
 {
     pub logo : [u8;48],                 //size = 0x30
-    pub title : [u8; 16],               //16 ASCII Characters
+    pub title : [u8; 11],               //11 ASCII Characters
     pub manufacturer_code : [u8; 4],    //4 ASCII Characters,     
     pub cgb_flag : u8,                  //GBC Mode or not
     pub sgb_flag : u8,                  //SGB Mode or not
@@ -44,7 +44,7 @@ pub fn init_header() -> cartridge_header
     cartridge_header
     {
         logo : [0;48],
-        title : [0;16],
+        title : [0;11],
         manufacturer_code : [0;4],
         cgb_flag : 0,
         sgb_flag : 0,
@@ -90,8 +90,25 @@ impl cartridge
     
     pub fn get_header(&mut self)
     {
+        //GET LOGO
         self.header.logo.copy_from_slice(&self.data[0x104..0x134]);
-        self.header.title.copy_from_slice(&self.data[0x134..0x144]);
-        println!("Title: {}", String::from_utf8(self.header.title.to_vec()).unwrap());
+        
+        //CHECK IF LOGO IS CORRECT
+        if self.header.logo == NINTENDO_LOGO
+        {
+            println!("Nintendo Logo found, it is an official ROM !");
+        }
+        else
+        {
+            println!("Nintendo Logo not found, it is not an official ROM !");
+        }
+
+        //GET GAME TITLE
+        self.header.title.copy_from_slice(&self.data[0x134..0x13F]);
+        println!("Title: {}", String::from_utf8(self.header.title.to_vec()).unwrap());  //Print the title
+
+        self.header.manufacturer_code.copy_from_slice(&self.data[0x13F..0x143]);     //Get the manufacturer code  
+        self.header.cgb_flag = self.data[0x143];    //Get the CGB flag
+        
     }
 }
