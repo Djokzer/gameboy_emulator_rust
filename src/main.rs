@@ -2,6 +2,7 @@ use raylib::prelude::*;
 
 mod main_menu;
 mod cartridge;
+mod emulator;
 
 const WIDTH : i32 = 160;
 const HEIGTH : i32 = 144;
@@ -25,6 +26,9 @@ fn main()
     let mut start_game : bool = false;
     let mut quit : bool = false;
 
+    //EMULATION
+    let mut emulator = emulator::init_emulator();
+
     //MAIN LOOP
     while !rl.window_should_close()
     {
@@ -35,13 +39,21 @@ fn main()
         if start_game
         {
             //EMULATION starts here
-            let mut cart = cartridge::init_cartridge().load_cartridge(&filename);
+
+            //TO DO
+
             quit = true;
         }
         else
         {   
             //MAIN MENU
             main_menu::draw_main_menu(&mut d, SCREEN_WIDTH, &mut menu_counter, &mut start_game, &mut quit, &mut filename);
+
+            //IF GAME CHOSEN LOAD THE ROM
+            if start_game
+            {   
+                emulator.load_rom(&filename);
+            }
         }
         
         if quit{break;}

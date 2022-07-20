@@ -1,5 +1,5 @@
 //Imports
-use std::{fs::{self, metadata, File}, io::Read};
+
 
 // Constants
 const NINTENDO_LOGO : [u8;48] = 
@@ -80,16 +80,11 @@ pub fn init_cartridge() -> cartridge
 //Cartridge methods
 impl cartridge
 {
-    pub fn load_cartridge(&mut self, filename : &str)
+    pub fn load_cartridge(&mut self, filename : &str, data : Vec<u8>)
     {
         self.filename = filename.to_string();
-
-        let mut f = File::open(&self.filename).expect("no file found");
-        let metadata = metadata(&self.filename).expect("unable to read metadata");
-        let mut buffer = vec![0; metadata.len() as usize];
-        f.read(&mut buffer).expect("buffer overflow");
         
-        self.data = buffer;
+        self.data = data;
         self.get_header();
     }
     
