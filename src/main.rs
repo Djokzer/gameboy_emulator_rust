@@ -6,8 +6,7 @@ mod emulator;
 
 const WIDTH : i32 = 160;
 const HEIGTH : i32 = 144;
-const BACKGROUND_COLOR : i32 = 0x2d3436;
-
+const BACKGROUND_COLOR : Color = Color::new(45, 52, 54, 255);
 fn main() 
 {
     //WINDOW
@@ -34,7 +33,7 @@ fn main()
     {
         //WINDOW
         let mut d = rl.begin_drawing(&thread);
-        d.clear_background(Color::get_color(BACKGROUND_COLOR));
+        d.clear_background(BACKGROUND_COLOR);
 
         if start_game
         {
