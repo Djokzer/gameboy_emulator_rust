@@ -4,11 +4,11 @@ A GameBoy Emulator to learn how emulation works.
 # Example
 *The Main Menu*
 
-![main_menu_1](assets/main_menu.PNG)
+![main_menu_1](assets/main_menu_1.png)
 
 *The Main Menu after the game is chosen*
 
-![main_menu_2](assets/main_menu_2.PNG)
+![main_menu_2](assets/main_menu_2.png)
 
 # Resources
 - [GameBoy Pandoc](https://gbdev.io/pandocs/)
