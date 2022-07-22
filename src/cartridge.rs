@@ -82,19 +82,73 @@ impl cartridge
 {
     pub fn load_cartridge(&mut self, filename : &str, data : Vec<u8>)
     {
-        self.filename = filename.to_string();
+        self.filename = filename.to_string(); //Copy the filename
         
-        self.data = data;
-        self.get_header();
+        self.data = data;	//Get the rom data
+
+        self.get_header();	//Fetch the header from the cartridge
+
+		self.header.print_header();	//Print the header
+
+		self.header.check_header_checksum(&self.data);	//Check the header checksum
+
     }
     
     pub fn get_header(&mut self)
     {
         //GET LOGO
         self.header.logo.copy_from_slice(&self.data[0x104..0x134]);
+
+        //GET GAME TITLE
+        self.header.title.copy_from_slice(&self.data[0x134..0x13F]);
+
+        self.header.manufacturer_code.copy_from_slice(&self.data[0x13F..0x143]);	//Get the manufacturer code  
         
-        //CHECK IF LOGO IS CORRECT
-        if self.header.logo == NINTENDO_LOGO
+		self.header.cgb_flag = self.data[0x143];    //Get the CGB flag
+
+		self.header.sgb_flag = self.data[0x146];	//Get the SGB flag
+
+		self.header.cartridge_type = self.data[0x147];	//Get the cartridge type
+	
+		self.header.rom_size = self.data[0x148];	//Get the ROM size
+
+		self.header.ram_size = self.data[0x149];	//Get the RAM size
+
+		self.header.mask_rom_version = self.data[0x14C];	//Get the ROM version
+		
+		self.header.header_checksum = self.data[0x14D];	//Get the header checksum
+		
+		self.header.global_checksum = (self.data[0x14E] as u16) << 8 | self.data[0x14F] as u16;	//Get the global checksum
+
+	}
+}
+
+impl cartridge_header
+{
+	pub fn check_header_checksum(&mut self, data : &Vec<u8>)
+	{
+		let mut x : u8 = 0;
+		
+		for i in 0x134..0x14D
+		{
+			x = x.wrapping_sub(data[i]).wrapping_sub(1);	
+		}
+		
+		if x == self.header_checksum
+		{
+			println!("Header Checksum OK");
+		}
+		else
+		{
+			println!("Header Checksum Error");
+			println!("Header Checksum = {}", x);
+		}
+	}
+
+	pub fn print_header(&mut self)
+	{
+		//CHECK IF LOGO IS CORRECT
+        if self.logo == NINTENDO_LOGO
         {
             println!("Nintendo Logo found, it is an official ROM !");
         }
@@ -103,12 +157,25 @@ impl cartridge
             println!("Nintendo Logo not found, it is not an official ROM !");
         }
 
-        //GET GAME TITLE
-        self.header.title.copy_from_slice(&self.data[0x134..0x13F]);
-        println!("Title: {}", String::from_utf8(self.header.title.to_vec()).unwrap());  //Print the title
+		println!("Title: {}", String::from_utf8(self.title.to_vec()).unwrap());	//Print the title
 
-        self.header.manufacturer_code.copy_from_slice(&self.data[0x13F..0x143]);     //Get the manufacturer code  
-        self.header.cgb_flag = self.data[0x143];    //Get the CGB flag
-        
-    }
+		println!("Manufacturer Code: {}", String::from_utf8(self.manufacturer_code.to_vec()).unwrap());	//Print the manufacturer code
+		println!("CGB Flag: {}", self.cgb_flag);	//Print the CGB flag
+		println!("SGB Flag: {}", self.sgb_flag);	//Print the SGB flag
+		println!("Cartridge Type: {}", CART_TYPE[self.cartridge_type as usize]);	//Print the cartridge type
+		println!("ROM Size: {} KB", 32 << self.rom_size);	//Print the ROM size
+		println!("RAM Size: {}", match self.ram_size	{	//Print the RAM size
+			0 => "None",
+			1 => "Unused",
+			2 => "8KB",
+			3 => "32KB",
+			4 => "128KB",
+			5 => "64KB",
+			_ => "Unknown",	
+	}
+	);
+		println!("ROM Version: {}", self.mask_rom_version);	//Print the ROM version
+		println!("Header Checksum: {}", self.header_checksum);	//Print the header checksum
+		println!("Global Checksum: {}", self.global_checksum);	//Print the global checksum
+	}
 }

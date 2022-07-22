@@ -7,6 +7,8 @@ mod emulator;
 const WIDTH : i32 = 160;
 const HEIGTH : i32 = 144;
 const BACKGROUND_COLOR : Color = Color::new(45, 52, 54, 255);
+
+const DELIMITER : &str = "----------------------------------------------------";
 fn main() 
 {
     //WINDOW
@@ -51,10 +53,15 @@ fn main()
             //IF GAME CHOSEN LOAD THE ROM
             if start_game
             {   
+                println!("{}", DELIMITER);
                 emulator.load_rom(&filename);
             }
         }
         
-        if quit{break;}
+        if quit
+        {
+            println!("{}", DELIMITER);
+            break;
+        }
     } 
 }
